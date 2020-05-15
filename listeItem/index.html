@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>List Item</title>
+    
+    <style>
+        body{
+            font-family: sans-serif;
+            width: 100vw;
+            height: 100vh;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin: 0;
+        }
+        h1{
+            align-items: center;
+            flex-direction: column;
+            display: flex;
+            color: #777;
+            border: 1px solid black;
+            background-color: rosybrown;
+        }
+        span{
+            font-size: 0.8em;
+            color: red;
+            padding: 5px;
+            cursor: pointer;
+        }
+        td:first-child{
+            width: 250px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+    </style>
+</head>
+<body>
+    
+    <div class="output"></div>
+    
+    <div>
+        <input type="text" id="addItem">
+        <input type="button" id="addNew" value="Add Item">
+    </div>
+    <script>
+        //let mysList = ["Bananas","Milk","Apples","Eggs","Cake"];
+        let mysList = [
+            {name:"Banane",checked:0}
+        ];
+        const btnAdd = document.querySelector('#addNew');
+        const output = document.querySelector('.output');
+        const newItem = document.querySelector('#addItem');
+        btnAdd.addEventListener('click',function(){
+            if(newItem.value){
+                mysList.push({name:newItem.value,checked:0});
+                build();
+                newItem.value = '';
+            }
+        });
+        
+        window.onload = build;
+        function build(){
+            output.innerHTML = '<h1>My list</h1>';
+            const tbl = document.createElement('table');
+            for(let i=0;i<mysList.length;i++){
+                const row = document.createElement('tr');
+                //row.ind = i;//Ajout de proprieté a l'objet
+                const cell1 = document.createElement('td');
+                cell1.innerHTML = mysList[i].name;
+                if(mysList[i].checked==1){
+                    cell1.innerHTML = `<strike>${mysList[i].name}</strike>`;
+                }
+                cell1.addEventListener('click',function(){
+                   mysList[i].checked = !mysList[i].checked;
+                    this.innerHTML = mysList[i].name;
+                    build();
+                })
+                row.appendChild(cell1);
+                const cell2 = document.createElement('td');
+                const span1 = document.createElement('span');
+                span1.innerText = "Delete";
+                span1.addEventListener('click',function(){
+                    //let temp = this.closest('tr').ind;
+                    let itemOut = mysList.splice(i,1);//Retirer l'element d'incice i
+                    build();
+                })
+                cell2.appendChild(span1);
+                const span2 = document.createElement('span');
+                span2.innerText = "Edit";
+                span2.addEventListener('click',function(){
+                    row.style.backgroundColor = 'Yellow';
+                    let tempVal = row.firstElementChild;
+                    //OU BIEN let tempVal = row.children[0].innerText;
+                    const newInput = document.createElement('input');
+                    newInput.value = tempVal.innerText;
+                    newInput.focus();
+                    tempVal.innerHTML = '';
+                    tempVal.appendChild(newInput)
+                    newInput.addEventListener('blur',function(){
+                        tempVal.innerHTML = newInput.value;
+                        row.style.backgroundColor = 'White';
+                        mysList[i].name = newInput.value;
+                    })
+                    
+                    console.log(tempVal)
+                })
+                cell2.appendChild(span2);
+                row.appendChild(cell2);
+                
+                tbl.appendChild(row);
+                
+            }
+            output.appendChild(tbl);
+        }
+    </script>
+</body>
+</html>
